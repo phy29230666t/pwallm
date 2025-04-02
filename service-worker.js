@@ -14,3 +14,20 @@ self.addEventListener("fetch", event => {
             .then(response => response || fetch(event.request))
     );
 });
+
+// 업데이트 체크
+self.addEventListener("activate", (event) => {
+    console.log("Service Worker activating...");
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cache) => {
+                    if (cache !== "pwa-cache-v1") {
+                        console.log("Old cache deleted:", cache);
+                        return caches.delete(cache);
+                    }
+                })
+            );
+        })
+    );
+});
